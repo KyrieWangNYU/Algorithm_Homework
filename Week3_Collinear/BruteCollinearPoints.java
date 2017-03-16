@@ -1,52 +1,54 @@
+package com.company;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
-
-
+/**
+ * Created by kyrie on 3/16/17.
+ */
 public class BruteCollinearPoints {
-
     private LineSegment[] segments;
 
+    public BruteCollinearPoints(Point[] points){
+        checkDuplicates(points);
 
-    public BruteCollinearPoints(Point[] points) {
-        checkDuplicatedEntries(points);
-        ArrayList<LineSegment> foundSegments = new ArrayList<>();
+        int n = points.length;
+        Point[] copied = Arrays.copyOf(points,n);
+        Arrays.sort(copied);
+        ArrayList<LineSegment> segmentsCollection = new ArrayList<>();
 
-        Point[] pointsCopy = Arrays.copyOf(points, points.length);
-        Arrays.sort(pointsCopy);
 
-        for (int p = 0; p < pointsCopy.length - 3; p++) {
-            for (int q = p + 1; q < pointsCopy.length - 2; q++) {
-                for (int r = q + 1; r < pointsCopy.length - 1; r++) {
-                    for (int s = r + 1; s < pointsCopy.length; s++) {
-                        if (pointsCopy[p].slopeTo(pointsCopy[q]) == pointsCopy[p].slopeTo(pointsCopy[r]) &&
-                                pointsCopy[p].slopeTo(pointsCopy[q]) == pointsCopy[p].slopeTo(pointsCopy[s])) {
-                            foundSegments.add(new LineSegment(pointsCopy[p], pointsCopy[s]));
+        for (int p = 0; p < n - 3; p++) {
+            for (int q = p + 1; q < n - 2; q++) {
+                for (int r = q + 1; r < n - 1; r++) {
+                    for (int s = r + 1; s < n; s++) {
+                        if (copied[p].slopeTo(copied[q]) == copied[p].slopeTo(copied[r]) &&
+                                copied[p].slopeTo(copied[q]) == copied[p].slopeTo(copied[s])){
+                            segmentsCollection.add(new LineSegment(copied[p],copied[s]));
                         }
                     }
                 }
             }
         }
 
-        segments = foundSegments.toArray(new LineSegment[foundSegments.size()]);
+        segments = segmentsCollection.toArray(new LineSegment[segmentsCollection.size()]);
     }
 
-    public int numberOfSegments() {
+    public int numberOfSegments(){
         return segments.length;
     }
 
-    public LineSegment[] segments() {
-        return Arrays.copyOf(segments, numberOfSegments());
+    public LineSegment[] segments(){
+        return Arrays.copyOf(segments, segments.length);
     }
 
-    private void checkDuplicatedEntries(Point[] points) {
-        for (int i = 0; i < points.length - 1; i++) {
-            for (int j = i + 1; j < points.length; j++) {
-                if (points[i].compareTo(points[j]) == 0) {
-                    throw new IllegalArgumentException("Duplicated entries in given points.");
+    private void checkDuplicates(Point[] points){
+        for (int i = 0; i < points.length; i++){
+            for (int j = i + 1; j < points.length; j++){
+                if (points[i].compareTo(points[j]) == 0){
+                    throw new IllegalArgumentException("Found duplicated entries in input");
                 }
             }
         }
     }
-
 }
